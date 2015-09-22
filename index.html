@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+
+    <script src="raphael-min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js">
+    </script>
+    <script>
+      var Perceptron = contracts.Perceptron.contract;
+      var rows = 5;
+      var columns = 5;
+      var circles = [[]];
+      var radius = 50;
+
+      $(function () {
+        var paper = Raphael(0, 0, radius * 2 * rows, radius * columns * 2);
+
+        for (var i = 0; i < rows; i++) {
+          circles[i] = [];
+          for (var j = 0; j < columns; j++) {
+            decision = Perceptron.decide.call([i,j]);
+            circles[i][j] = paper.circle(radius + (2 * radius * i), radius + (radius * 2 * j), radius)
+            .attr({fill: decision? "#00d": "#dd0"})
+            .data("decision", decision)
+            .click(function () {
+              alert(this.data("decision"));
+            });
+          }
+        }
+      });
+
+    </script>
+
+    <title>
+    </title>
+  </head>
+
+  <body>
+    <div id="wrapper">
+    </div>
+
+  </body>
+</html>
