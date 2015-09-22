@@ -9,26 +9,43 @@
     </script>
     <script>
       var Perceptron = contracts.Perceptron.contract;
-      var rows = 5;
-      var columns = 5;
-      var circles = [[]];
-      var radius = 50;
+      var rows = 10;
+      var columns = 10;
+      var circles = [];
+      var size = 50;
 
       $(function () {
-        var paper = Raphael(0, 0, radius * 2 * rows, radius * columns * 2);
+        var paper = Raphael(0, 0, size * 2 * rows, size * columns * 2);
 
         for (var i = 0; i < rows; i++) {
           circles[i] = [];
           for (var j = 0; j < columns; j++) {
-            decision = Perceptron.decide.call([i,j]);
-            circles[i][j] = paper.circle(radius + (2 * radius * i), radius + (radius * 2 * j), radius)
-            .attr({fill: decision? "#00d": "#dd0"})
-            .data("decision", decision)
-            .click(function () {
-              alert(this.data("decision"));
-            });
+            circles[i][j] = paper.rect(size * i, size * j, size, size);
+
+            Perceptron.decide.call([i,j], (function(error, decision) {
+              console.log(decision);
+              this.circle.attr({fill: decision? "#88f": "#ff0"})
+              .data("decision", decision)
+              .click(function () {
+                alert(this.data("decision"));
+              });
+            }).bind({circle: circles[i][j]}));
           }
         }
+        var i = 0;
+        var item = Perceptron.getTrainingItem.call(i);
+        var coord = item[0];
+        var next = coord.length > 0;
+        while (next) {
+          target = item[1];
+          paper.rect(size * coord[0], size * coord[1], size, size)
+            .attr({fill: target? "#009": "#990"});
+          i++;
+          item = Perceptron.getTrainingItem.call(i);
+          coord = item[0];
+          next = coord.length > 0;
+        }
+
       });
 
     </script>

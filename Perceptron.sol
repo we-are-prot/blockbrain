@@ -2,7 +2,7 @@ contract Perceptron {
     int256[][] public training_data;
     bool[] public target_decisions;
     int256[] public weights;
-    int256 public threshold = 0;
+    int256 public threshold = 1;
     event Learning(int256, uint256);
     event Converged();
 
@@ -95,7 +95,7 @@ contract Perceptron {
             Learning(threshold, converged);
             if (last_threshold == threshold || array_is_equal(last_weights, weights)) {
                 converged++;
-                if (converged == 3) {
+                if (converged == 4) {
                     // no change for three iterations
                     Converged();
                     return;
