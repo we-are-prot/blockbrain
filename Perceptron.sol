@@ -2,8 +2,9 @@ contract Perceptron {
     int256[][] public training_data;
     bool[] public target_decisions;
     int256[] public weights;
-    int256 public threshold = 1;
+    int256 public threshold = 0;
     event Learning(int256, uint256);
+    event Weights(string, int256);
     event Converged();
 
     function echo(int[] a, uint b) returns (int) {
@@ -85,20 +86,21 @@ contract Perceptron {
         return weights;
     }
 
-    function learn(uint max_iterations) {
+    function learn(uint max_iterations) returns (bool){
         uint converged = 0;
         int256 last_threshold = 0;
         int256[] memory last_weights;
+        last_weights = weights;
 
         for (uint i = 0; i < max_iterations; i++) {
             learnOnce();
             Learning(threshold, converged);
-            if (last_threshold == threshold || array_is_equal(last_weights, weights)) {
+            if (last_threshold == threshold && array_is_equal(last_weights, weights)) {
                 converged++;
-                if (converged == 4) {
+                if (converged == 3) {
                     // no change for three iterations
                     Converged();
-                    return;
+                    return true;
                 }
             } else {
                 converged = 0;
@@ -107,6 +109,7 @@ contract Perceptron {
             last_threshold = threshold;
             last_weights = weights;
         }
+        return false;
     }
 
     function learnOnce() returns (int256 ret){
